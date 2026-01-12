@@ -1,6 +1,7 @@
 let numA;
 let numB;
 let operator;
+let numResetIndicator;
 
 const numbers = document.querySelector('#numbers');
 numbers.addEventListener('click', numberClick);
@@ -35,16 +36,21 @@ function compute() {
 function resetCalculator() {
     const display = document.querySelector('#display');
     display.innerText = '';
-    numA = null;
-    numB = null;
-    operator = null;
+    numA = undefined;
+    numB = undefined;
+    operator = undefined;
 }
 
 function numberClick(event) {
     if (event.target.classList.contains('number')) {
         const display = document.querySelector('#display');
         const clickedNumber = event.target.innerText;
-        console.log(clickedNumber);
+        
+        if (numResetIndicator) {
+            numResetIndicator = undefined;
+            numA = undefined;
+            display.innerText = '';
+        }
 
         display.innerText += clickedNumber;
 
@@ -67,13 +73,24 @@ function operatorClick(event) {
     }
 
     const clickedOperator = event.target.innerText;
+    const display = document.querySelector('#display');
 
-    if (!operator && event.target.classList.contains('mathOp')) {
-        const display = document.querySelector('#display');
-        console.log(clickedOperator);
-
+    if (numA >= 0 && !operator && event.target.classList.contains('mathOp')) {
         operator = operators[clickedOperator];
         display.innerText += clickedOperator;
+        numResetIndicator = undefined;
+    } else if (numB && event.target.classList.contains('mathOp')) {
+        numA = operate(numA, numB, operator);
+        numB = undefined;
+        operator = operators[clickedOperator];
+        display.innerText = numA + clickedOperator;
+        numResetIndicator = 'reset';
+    } else if (clickedOperator === '=' && numA && numB && operator) {
+        numA = operate(numA, numB, operator);
+        numB = undefined;
+        operator = undefined;
+        display.innerText = numA;    
+        numResetIndicator = 'reset';    
     } else if (clickedOperator === 'CLR')  {
         resetCalculator();
     }
