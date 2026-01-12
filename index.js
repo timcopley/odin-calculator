@@ -1,5 +1,5 @@
-let numA = 0;
-let numB = 0;
+let numA;
+let numB;
 let operator;
 
 const numbers = document.querySelector('#numbers');
@@ -35,8 +35,8 @@ function compute() {
 function resetCalculator() {
     const display = document.querySelector('#display');
     display.innerText = '';
-    numA = 0;
-    numB = 0;
+    numA = null;
+    numB = null;
     operator = null;
 }
 
@@ -49,9 +49,9 @@ function numberClick(event) {
         display.innerText += clickedNumber;
 
         if (!operator) {
-            numA = +(numA + clickedNumber);
+            numA = !numA ? +clickedNumber : +(numA + clickedNumber);
         } else {
-            numB = +(numB + clickedNumber);
+            numB = !numB ? +clickedNumber : +(numB + clickedNumber);
         }
     }   
 }
