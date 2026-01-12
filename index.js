@@ -41,18 +41,19 @@ function resetCalculator() {
 }
 
 function numberClick(event) {
-    const display = document.querySelector('#display');
-    const clickedNumber = event.target.innerText;
-    console.log(clickedNumber);
+    if (event.target.classList.contains('number')) {
+        const display = document.querySelector('#display');
+        const clickedNumber = event.target.innerText;
+        console.log(clickedNumber);
 
-    display.innerText += clickedNumber;
+        display.innerText += clickedNumber;
 
-    if (!operator) {
-        numA = +(numA + clickedNumber);
-    } else {
-        numB = +(numB + clickedNumber);
-    }
-    
+        if (!operator) {
+            numA = +(numA + clickedNumber);
+        } else {
+            numB = +(numB + clickedNumber);
+        }
+    }   
 }
 
 function operatorClick(event) {
@@ -64,16 +65,16 @@ function operatorClick(event) {
         '=': compute,
         'CLR': resetCalculator,
     }
-    if (!operator) {
+
+    const clickedOperator = event.target.innerText;
+
+    if (!operator && event.target.classList.contains('mathOp')) {
         const display = document.querySelector('#display');
-        const clickedOperator = event.target.innerText;
         console.log(clickedOperator);
 
         operator = operators[clickedOperator];
         display.innerText += clickedOperator;
-    } else {
-
+    } else if (clickedOperator === 'CLR')  {
+        resetCalculator();
     }
-
-
 }
