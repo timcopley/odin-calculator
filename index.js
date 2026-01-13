@@ -3,6 +3,8 @@ let numB;
 let operator;
 let numResetIndicator;
 
+const display = document.querySelector('#display');
+
 const numbers = document.querySelector('#numbers');
 numbers.addEventListener('click', numberClick);
 
@@ -29,12 +31,7 @@ function operate( a, b, operator) {
     return operator(a, b);
 }
 
-function compute() {
-
-}
-
 function resetCalculator() {
-    const display = document.querySelector('#display');
     display.innerText = '';
     numA = undefined;
     numB = undefined;
@@ -43,7 +40,6 @@ function resetCalculator() {
 
 function numberClick(event) {
     if (event.target.classList.contains('number')) {
-        const display = document.querySelector('#display');
         const clickedNumber = event.target.innerText;
         
         if (numResetIndicator) {
@@ -63,35 +59,62 @@ function numberClick(event) {
 }
 
 function operatorClick(event) {
+    if (event.target.classList.contains('mathOp')) {
+        mathOpClick(event);
+    } else if (event.target.classList.contains('equals')) {
+        equalsClick(event);
+    } else if (event.target.classList.contains('clear')) {
+        clearClick(event);
+    }
+}
+
+function mathOpClick(event) {
     const operators = {
         '+': add,
         '-': subtract,
         'x': multiply,
         '/': divide,
-        '=': compute,
-        'CLR': resetCalculator,
     }
 
     const clickedOperator = event.target.innerText;
-    const display = document.querySelector('#display');
 
-    if (numA >= 0 && !operator && event.target.classList.contains('mathOp')) {
+    if (typeof numA === 'number' && !operator) {
         operator = operators[clickedOperator];
         display.innerText += clickedOperator;
         numResetIndicator = undefined;
-    } else if (numB && event.target.classList.contains('mathOp')) {
-        numA = operate(numA, numB, operator);
-        numB = undefined;
-        operator = operators[clickedOperator];
-        display.innerText = numA + clickedOperator;
-        numResetIndicator = 'reset';
-    } else if (clickedOperator === '=' && numA && numB && operator) {
-        numA = operate(numA, numB, operator);
-        numB = undefined;
-        operator = undefined;
-        display.innerText = numA;    
-        numResetIndicator = 'reset';    
-    } else if (clickedOperator === 'CLR')  {
-        resetCalculator();
+    } else {
+        performOperation(operators[clickedOperator]);
+        display.innerText += clickedOperator;
     }
+}
+
+function isValidOperation() {
+    return (operator === divide && numB === 0) ? false : true;
+}
+
+function computeResult() {
+    return operator(numA, numB);
+}
+
+function equalsClick(event) {
+    performOperation();  
+}
+
+function performOperation(nextOp = null) {
+    if (typeof numA === 'number' && typeof numB === 'number' && operator) {
+            if (isValidOperation()) {
+                const result = computeResult();
+                numA = +result;
+                numB = null;
+                operator = nextOp;
+                display.innerText = result;
+                numResetIndicator = nextOp ? null : 'reset';
+            } else {
+                display.innerText = "You done messed up! Hit CLR and try something else."
+            }
+        }      
+}
+
+function clearClick(event) {
+    resetCalculator();
 }
