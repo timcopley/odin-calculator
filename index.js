@@ -102,17 +102,17 @@ function equalsClick(event) {
 
 function performOperation(nextOp = null) {
     if (typeof numA === 'number' && typeof numB === 'number' && operator) {
-            if (isValidOperation()) {
-                const result = computeResult();
-                numA = +result;
-                numB = null;
-                operator = nextOp;
-                display.innerText = result;
-                numResetIndicator = nextOp ? null : 'reset';
-            } else {
-                display.innerText = "You done messed up! Hit CLR and try something else."
-            }
-        }      
+        if (isValidOperation()) {
+            const result = computeResult();
+            numA = +result;
+            numB = null;
+            operator = nextOp;
+            display.innerText = result;
+            numResetIndicator = nextOp ? null : 'reset';
+        } else {
+            display.innerText = "You done messed up! Hit CLR and try something else."
+        }
+    }      
 }
 
 function clearClick(event) {
